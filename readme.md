@@ -15,7 +15,7 @@ The prototype is focused on the backend functionality that powers the adaptive l
 ## System Requirements
 
 - macOS 12+ (optimized for M1 MacBook)
-- Python 3.10+
+- Python 3.9+
 - 8GB+ RAM
 - Docker (optional, for containerized deployment)
 
@@ -28,29 +28,54 @@ git clone https://github.com/yourusername/sangram-tutor.git
 cd sangram-tutor
 ```
 
-### 2. Set Up Python Environment
+### 2. Quick Start (Recommended)
+
+We provide a quick start script that handles all setup automatically:
+
+```bash
+# Make the script executable
+chmod +x quick_start.sh
+
+# Run the quick start script
+./quick_start.sh
+```
+
+The script will:
+1. Create a virtual environment
+2. Install all dependencies
+3. Set up the necessary directories
+4. Install the package in development mode
+5. Start the API server
+
+### 3. Manual Setup
+
+If you prefer to set up manually:
 
 ```bash
 # Create and activate a virtual environment
-python -m venv venv
+python3 -m venv venv
 source venv/bin/activate  # On Windows: venv\Scripts\activate
 
-# Install dependencies
-pip install -r requirements.txt
+# Install the package in development mode
+pip install -e .
+
+# Create necessary directories
+mkdir -p data vector_indices
+
+# Set PYTHONPATH to include the current directory
+export PYTHONPATH=$PYTHONPATH:$(pwd)
+
+# Start the API server
+python -m sangram_tutor.main
 ```
 
-### 3. Initialize the Database
+### 4. Verify Installation
 
-The system uses SQLite for development purposes, which will be automatically initialized on first run.
-
-### 4. Start the API Server
+To verify that everything is installed correctly:
 
 ```bash
-# Start the API server
-uvicorn sangram_tutor.main:app --reload
+python verify_installation.py
 ```
-
-The API will be available at http://localhost:8000
 
 ### 5. Run the Demo (For Investors)
 
@@ -60,6 +85,26 @@ python demo/demo_script.py
 ```
 
 This script showcases the core capabilities through a simulated student interaction.
+
+## Troubleshooting
+
+If you encounter any issues:
+
+1. **ImportError or ModuleNotFoundError**:
+   - Make sure you've installed the package in development mode with `pip install -e .`
+   - Ensure your PYTHONPATH includes the root directory
+   - Verify that all subpackages have `__init__.py` files
+
+2. **Database Errors**:
+   - Check if the `data` directory exists and is writable
+   - Delete the database file and restart to recreate it
+
+3. **Dependency Issues**:
+   - Try installing dependencies separately: `pip install -r requirements.txt`
+   - Ensure you're using Python 3.9+ with `python --version`
+
+4. **Permission Issues**:
+   - Make sure scripts are executable: `chmod +x quick_start.sh`
 
 ## Demo Features
 
@@ -101,6 +146,17 @@ This prototype represents Phase 1 of the project. Future phases will include:
 - Enhanced AI capabilities using larger language models
 - Multi-language support
 - Advanced accessibility features
+
+## Docker Deployment (Optional)
+
+For a containerized deployment:
+
+```bash
+# Build and start containers
+docker-compose up -d
+
+# Access the API at http://localhost:8000
+```
 
 ## Contact
 
