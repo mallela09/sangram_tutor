@@ -1,4 +1,7 @@
 # sangram_tutor/main.py
+import sys
+import os
+sys.path.append(os.path.dirname(os.path.abspath(__file__)))
 import logging
 import os
 from fastapi import FastAPI, Depends, HTTPException, status
@@ -6,15 +9,15 @@ from fastapi.middleware.cors import CORSMiddleware
 from sqlalchemy.orm import Session
 
 # Import API routers
-from sangram_tutor.api.auth import router as auth_router
-from sangram_tutor.api.users import router as users_router
-from sangram_tutor.api.learning import router as learning_router
-from sangram_tutor.api.analytics import router as analytics_router
+from api.auth import router as auth_router
+from api.users import router as users_router
+from api.learning import router as learning_router
+from api.analytics import router as analytics_router
 
 # Import database components
-from sangram_tutor.db.session import get_db, engine
-from sangram_tutor.db.init_db import init_db
-from sangram_tutor.db.init_vectors import init_vector_db, update_content_embeddings
+from db.session import get_db, engine
+from db.init_db import init_db
+from db.init_vectors import init_vector_db, update_content_embeddings
 
 # Configure logging
 logging.basicConfig(
@@ -88,4 +91,4 @@ async def health_check():
 # or through uvicorn with the module:app syntax
 if __name__ == "__main__":
     import uvicorn
-    uvicorn.run("sangram_tutor.main:app", host="0.0.0.0", port=8000, reload=True)
+    uvicorn.run("main:app", host="0.0.0.0", port=8000, reload=True)

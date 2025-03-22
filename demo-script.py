@@ -1,4 +1,4 @@
-# demo/demo_script.py
+# demo_script.py
 """
 Demo script for Sangram Tutor prototype.
 
