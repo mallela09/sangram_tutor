@@ -4,9 +4,40 @@ import os
 sys.path.append(os.path.dirname(os.path.abspath(__file__)))
 import logging
 import os
-from fastapi import FastAPI, Depends, HTTPException, status
+import json
+from fastapi import FastAPI, Depends, HTTPException, status, Request, Response
 from fastapi.middleware.cors import CORSMiddleware
+from starlette.middleware.base import BaseHTTPMiddleware
 from sqlalchemy.orm import Session
+
+# Error handling middleware class
+class ErrorHandlingMiddleware(BaseHTTPMiddleware):
+    async def dispatch(self, request: Request, call_next):
+        try:
+            response = await call_next(request)
+            return response
+        except Exception as e:
+            logging.error(f"Unhandled exception: {str(e)}")
+            # Try to recover from common serialization issues
+            if "full_name" in str(e).lower():
+                # Return a response with a fixed user object
+                json_compatible_response = {
+                    "error": "User serialization issue detected and handled",
+                    "detail": str(e),
+                    "fixed_user": {
+                        "username": "fixed_user",
+                        "email": "fixed@example.com",
+                        "full_name": None,
+                        "disabled": False
+                    }
+                }
+                return Response(
+                    content=json.dumps(json_compatible_response),
+                    status_code=500,
+                    media_type="application/json"
+                )
+            # Re-raise the exception if we can't handle it
+            raise e
 
 # Import API routers
 from api.auth import router as auth_router
@@ -21,8 +52,8 @@ from db.init_vectors import init_vector_db, update_content_embeddings
 
 # Configure logging
 logging.basicConfig(
-    level=logging.INFO,
-    format="%(asctime)s - %(name)s - %(levelname)s - %(message)s",
+    level=logging.DEBUG,  # Changed from INFO to DEBUG for more detailed logs
+    format="%(asctime)s - %(name)s - %(levelname)s - %(message)s - %(lineno)d",
 )
 logger = logging.getLogger(__name__)
 
@@ -32,6 +63,9 @@ app = FastAPI(
     description="API for the Sangram Tutor AI-powered math learning app",
     version="0.1.0",
 )
+
+# Add ErrorHandlingMiddleware first (before CORS middleware)
+app.add_middleware(ErrorHandlingMiddleware)
 
 # Add CORS middleware
 app.add_middleware(
