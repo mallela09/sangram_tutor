@@ -20,7 +20,7 @@ import matplotlib.pyplot as plt
 from tabulate import tabulate
 
 # Configuration
-BASE_URL = "http://localhost:8000/api"
+BASE_URL = "http://127.0.0.1:8080/api"
 ADMIN_CREDENTIALS = {"username": "admin", "password": "admin123"}
 STUDENT_CREDENTIALS = {"username": "student", "password": "student123"}
 
@@ -453,14 +453,14 @@ def run_demo():
         
     except requests.exceptions.ConnectionError:
         print("\n❌ ERROR: Could not connect to the API server.")
-        print("Make sure the server is running at http://localhost:8000")
+        print("Make sure the server is running at http://localhost:8080")
     except Exception as e:
         print(f"\n❌ ERROR: {str(e)}")
 
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Sangram Tutor Demo")
-    parser.add_argument("--url", help="API base URL", default="http://localhost:8000/api")
+    parser.add_argument("--url", help="API base URL", default="http://127.0.0.1:8080/api")
     
     args = parser.parse_args()
     BASE_URL = args.url
